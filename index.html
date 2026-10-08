@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camera Photo</title>
+</head>
+<body>
+  <h2>Camera Photo</h2>
+
+  <video id="camera" autoplay playsinline width="100%"></video>
+  <br><br>
+
+  <button id="start">Allow Camera</button>
+  <button id="take">Take Photo</button>
+
+  <br><br>
+  <canvas id="photo" style="max-width:100%;"></canvas>
+
+  <script>
+    const video = document.getElementById("camera");
+    const canvas = document.getElementById("photo");
+
+    document.getElementById("start").onclick = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true
+        });
+        video.srcObject = stream;
+      } catch (error) {
+        alert("Camera permission was not granted.");
+      }
+    };
+
+    document.getElementById("take").onclick = () => {
+      if (!video.srcObject) {
+        alert("First allow the camera.");
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      canvas.getContext("2d").drawImage(video, 0, 0);
+
+      const link = document.createElement("a");
+      link.download = "my-photo.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+  </script>
+</body>
+</html>
